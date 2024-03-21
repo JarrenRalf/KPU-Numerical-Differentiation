@@ -1,0 +1,275 @@
+\documentclass{article}
+
+\usepackage[framed, numbered]{matlab-prettifier}
+\usepackage{amsmath, amssymb, amsthm, fullpage}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{breqn}
+\usepackage{color}
+
+\hypersetup{colorlinks = true, citecolor = {red}}
+
+\definecolor{lightgray}{gray}{0.5}
+
+\title{MATH 4220 \\ Assignment \# 5}
+\author{Jarren Ralf}
+\date{Due On: November 26, 2018}
+
+\begin{document}
+	\maketitle
+	
+	\begin{enumerate}[label = \arabic*]
+		\item Let $f(x)$ be a given function that can be evaluated at points $x_0 \pm jh, j = 0, 1, 2, \dots$ for any fixed value of $h$, $0 < h \ll 1.$
+		\begin{enumerate}
+			\item Find a second order formula (i.e. truncation error $\mathcal{O} \left( h^2 \right)$) approximating the third derivative $f'''(x_0)$ using the 4 points $x_0 - 2h, x_0 - h, x_0 + h,$ and $x_0 + 2h$. Give a formula as well as an expression for the truncation error (not just its order). \\
+			
+			\hspace{15pt} We begin by using the taylor expansion. Let $f \in \mathcal{C}^5[a, b]$ and $x_0 \in [a, b]$. Suppose there exists real numbers $\xi_1, \xi_2, \xi_3,\xi_4 \in [a, b]$ such that
+			\begin{align}
+				f(x_0 +  h) &= f(x_0) + hf'(x_0) + \frac{h^2}{2}f''(x_0) + \frac{h^3}{3!}f'''(x_0) + \frac{h^4}{4!}f^{(4)}(x_0) + \frac{h^5}{5!}f^{(5)}(\xi_1) \label{eq:eq1} \\
+				f(x_0 -  h) &= f(x_0) - hf'(x_0) + \frac{h^2}{2}f''(x_0) - \frac{h^3}{3!}f'''(x_0) + \frac{h^4}{4!}f^{(4)}(x_0) - \frac{h^5}{5!}f^{(5)}(\xi_2) \label{eq:eq2} \\
+				f(x_0 + 2h) &= f(x_0) + 2hf'(x_0) + \frac{2^2h^2}{2}f''(x_0) + \frac{2^3h^3}{3!}f'''(x_0) + \frac{2^4h^4}{4!}f^{(4)}(x_0) + \frac{2^5h^5}{5!}f^{(5)}(\xi_3) \label{eq:eq3} \\
+				f(x_0 - 2h) &= f(x_0) - 2hf'(x_0) + \frac{2^2h^2}{2}f''(x_0) - \frac{2^3h^3}{3!}f'''(x_0) + \frac{2^4h^4}{4!}f^{(4)}(x_0) - \frac{2^5h^5}{5!}f^{(5)}(\xi_4) \label{eq:eq4},
+			\end{align}
+			for $ x_0 \leq \xi_1 \leq x_0 + h$, $ x_0 - h \leq \xi_2 \leq x_0$, $ x_0 \leq \xi_3 \leq x_0 + 2h $, and $x_0 - 2h \leq \xi_4 \leq x_0$.
+			Now if we subtract Equation \ref{eq:eq2} from Equation \ref{eq:eq1} as well as \ref{eq:eq3} - \ref{eq:eq4} the result is
+			\begin{align}
+				f(x_0 +  h) - f(x_0 -  h) &= 2hf'(x_0) + \frac{h^3}{3}f'''(x_0) + \frac{h^5}{120}f^{(5)}(\xi_1) + \frac{h^5}{120}f^{(5)}(\xi_2) \label{eq:eq5} \\
+				f(x_0 + 2h) - f(x_0 - 2h) &= 4hf'(x_0) + \frac{8h^3}{3}f'''(x_0) + \frac{4h^5}{15}f^{(5)}(\xi_3) + \frac{4h^5}{15}f^{(5)}(\xi_4). \label{eq:eq6}
+			\end{align}
+			Notice that if we double Equation \ref{eq:eq5} and subtract it from Equation \ref{eq:eq6} then we can eliminate the $f'(x_0)$ term. Additionally, since $f \in \mathcal{C}^5[a, b]$, we know that there exists a maximum of $f^{(5)}(x)$ on $[a, b]$, let's denote this by $M$, which we can replace our fifth derivative terms by. This leaves us with \[f(x_0 + 2h) - f(x_0 - 2h) - 2\Big(f(x_0 +  h) - f(x_0 -  h)\Big) \leq 2h^3 f'''(x_0) + \frac{h^5}{2}M.\] Now to rearrange the equation and get $f'''(x_0)$ on one side \[2h^3f'''(x_0) \geq f(x_0 + 2h) - f(x_0 - 2h) - 2f(x_0 +  h) + 2f(x_0 -  h) - \frac{h^5}{2}M.\] Then, the second order formula for approximating the third derivative is \[f'''(x_0) \approx \frac{f(x_0 + 2h) - 2f(x_0 +  h) + 2f(x_0 -  h) - f(x_0 - 2h)}{2h^3}.\] The truncation error is given by the expression \[\frac{h^2}{4}M,\] where $M$ is the maximum of the fifth derivative. The truncation error could be instead written in terms of $f^{(5)}(\xi)$, for some real number $\xi \in [a, b].$ To come up with an expression, the Intermediate Value Theorem would be used on the two error terms in equation \ref{eq:eq6}. The derivation is left up to the reader as an exercise. \\
+			
+			\item Use your formula to find approximations to $f'''(0)$ for the function $f(x) = e^x$ employing values of $h = 10^{-1}, 10^{-2}, \dots , 10^{-9}$ with the default MATLAB arithmetic. Verify that for the larger values of $h$ your formula is indeed second order accurate. What value of $h$ gives the closest approximation to $e^0 = 1$? \\
+			
+			\hspace{15pt} The choice of step size $h$ affects the relative magnitudes of truncation and roundoff errors. Our difference approximation is given by \[ D_h = \frac{f(x_0 + 2h) - 2f(x_0 +  h) + 2f(x_0 -  h) - f(x_0 - 2h)}{2h^3} \] let's denote by $\bar{D}_h$ the calculated value for $D_h$. Let $\bar{f}(x) \equiv \mathrm{fl}(f(x))$, thus we have $\bar{f}(x) = f(x) + e_r(x)$, where $e_r(x)$ is the roundoff error term, assumed bounded by $\epsilon$, $|e_r(x)| \leq \epsilon$. Based on our five-point formula, we have \[ \bar{D}_h = \frac{\bar{f}(x_0 + 2h) - 2\bar{f}(x_0 +  h) + 2\bar{f}(x_0 -  h) - \bar{f}(x_0 - 2h)}{2h^3}. \] We use the following equation to find the roundoff error associated with the floating point representation 
+			\begin{dgroup*}$
+				\begin{dmath*}
+					|\bar{D}_h - D_h| = \frac{\bar{f}(x_0 + 2h) - 2\bar{f}(x_0 +  h) + 2\bar{f}(x_0 -  h) - \bar{f}(x_0 - 2h)}{2h^3} - \frac{f(x_0 + 2h) - 2f(x_0 +  h) + 2f(x_0 -  h) - f(x_0 - 2h)}{2h^3}
+				\end{dmath*}
+				\begin{dmath*}
+					= \frac{e_r(x_0 + 2h) - 2e_r(x_0 +  h) + 2e_r(x_0 -  h) - e_r(x_0 - 2h)}{2h^3}
+				\end{dmath*}
+				\begin{dmath*}
+					\leq \left|\frac{e_r(x_0 + 2h)}{2h^3}\right| + 2\left|\frac{e_r(x_0 +  h)}{2h^3}\right| + 2\left|\frac{e_r(x_0 -  h)}{2h^3}\right| + \left|\frac{e_r(x_0 - 2h)}{2h^3}\right|
+				\end{dmath*}
+				\begin{dmath*}
+					\leq \frac{6 \epsilon}{2h^3}
+				\end{dmath*}
+				\begin{dmath*}
+					= \frac{3 \epsilon}{h^3}.
+				\end{dmath*}$
+			\end{dgroup*}
+			Assuming $|f^{(5)}(\xi)| \leq M$ in $[x_0 - 2h, x_0 + 2h]$, we can bound the approximation by
+			\begin{align*}
+				|f^{(5)}(x_0) - \bar{D}_h| &= |(f^{(5)}(x_0) - D_h) + (D_h - \bar{D}_r)| \\
+										&\leq |f^{(5)}(x_0) - D_h| + |D_h - \bar{D}_h| \leq \frac{h^2M}{4} + \frac{3 \epsilon}{h^3}.
+			\end{align*}
+			Now define $E(h) = \frac{h^2M}{4} + \frac{3 \epsilon}{h^3}.$ Using this formula we can use calculus methods to find the optimal $h$. The result is \[ \frac{\mathrm{d}E}{\mathrm{d}h} = \frac{hM}{2} - \frac{9\epsilon}{h^4} = 0. \] Therefore the optimal $h$ can be found with the following equation, 
+			\begin{align*}
+				\frac{hM}{2} &= \frac{9\epsilon}{h^4} \\
+						 h^5 &= \frac{18\epsilon}{M} \\
+						   h &= \sqrt[5]{\frac{18\epsilon}{M}}.
+			\end{align*}
+			Lastly, for the implementation of this formula, we will substitute in the machine epsilon, $\eta = \frac{1}{2}2^{-52} \approx 1.1 \times 10^{-16}$, for $\epsilon$, and we will use $M = e^0 = 1.$ The justification for this is that since $h$ is small, the function won't be much different for little deviations away from zero, so this is a convenient choice which will still give an accurate result.
+			
+			\hspace{15pt} In class we derived a formula for the approximate truncation error. We can therefore use this to verify the order of accuracy in our centered difference approximation. The equation was \[ \alpha = \frac{\ln(e_{i + 1}) - \ln(e_i)}{\ln(h_{i + 1}) - \ln(h_i)} \] where $e_i$ is the error at step $i$.
+			
+			\lstinputlisting[style = MATLAB-editor, basicstyle = \mlttfamily\scriptsize, linerange = {4 - 35}, caption = {MATLAB code for approximating the third derivative of $e^x$ at $x_0$}]{assignment5.m}
+			
+			\pagebreak
+			
+			\color{lightgray}
+			\begin{verbatim}
+				Using the centered difference formula for approximating third 
+				derivative of e^x at 0:
+				
+				h = 0.100000000 and e^0 = 1.00250250
+				h = 0.010000000 and e^0 = 1.00002500
+				h = 0.001000000 and e^0 = 1.00000025
+				h = 0.000100000 and e^0 = 0.99997788
+				h = 0.000010000 and e^0 = 1.05471187
+				h = 0.000001000 and e^0 = 55.51115123
+				h = 0.000000100 and e^0 = 166533.45369377
+				h = 0.000000010 and e^0 = 55511151.23125782
+				h = 0.000000001 and e^0 = -55511151231.25781250
+				
+				The approximate order of the truncation error for each term is:	
+				    2.0004    2.0013   -1.9481   -3.3933   -2.9984   -3.4850   -2.5229   -3.0000
+				
+				The value of h that yields the closest approximation is h = 0.001
+				The theoretical optimal h is 0.00132
+			\end{verbatim}
+			\color{black}
+			
+			\hspace{15pt} If you observe the larger values of $h$, you can indeed see that the approximations for the third derivative of $e^0$ are second order accurate. Notice that in the beginning with each decrease in $h$, the approximation gains about two digits of accuracy. This is a qualitative measure for checking that we do have second order accuracy. To verify this observation, notice that the order of the truncation error is approximately two for the first few values of $h$. However, as soon as we reach $h = 10^{-4}$, the approximation dips below our expected value of $e^0 = 1,$ and then precedes to increase with smaller values of $h$. Additionally, not only do the approximations increase, they become overwhelmingly large in absolute error. This is caused by the roundoff errors, specifically cancellation errors. Finally, observe that the optimal value of $h$ is approximately 0.00132, which agrees with the simulation. \\
+			
+			\item For the formula that you derived in (a), how does the roundoff error behave as a function of $h$, as $h \rightarrow 0$? \\
+			
+			\hspace{15pt} As you can see from the matlab output above, the approximations blow up as $h$ begins to get small. This phenomenon is due to roundoff errors. Notice in the denominator of our equation there is an $h^3$, this means that a small number substituted in for $h$ will get quite a lot smaller. As the value of the denominator shrinks down closer to the machine epsilon, the ratio of numerator to denominator is no longer near the value one. We can also deduce that in the beginning, the approximations were dominated by the truncation error, but near the optimal $h$, the roundoff errors start to become more dominant. This is also likely caused by cancellation errors in the numerator of the expression. \\
+			
+			\item How would you go about obtaining a fourth order formula for $f'''(x_0)$ in general? You don't have to actually derive it: just describe in one or two sentences. How many points would this formula require? \\
+			
+			\hspace{15pt} In order to derive a fourth order formula for $f'''(x_0)$, you would need to use a seven point formula. To clarify, you would need the points $x_0 - 3h, x_0 - 2h, x_0 - h, x_0 + h, x_0 + 2h,$ and $x_0 + 3h$, although there are only six points listed here, knowing the value of $x_0$ implies the user knows seven points. Recall that as you use the taylor expansion to come up with a formula for these terms, the third derivative term has an $h^3$. In order to derive a fourth order formula, we must realize that each term gets divided by $h^3$, which suggests we need an $h^7$ term in our expansion. The last thing to realize is that the terms left over after computing the difference of each expansion, would be all the odd derivatives. Therefore, we must find appropriate multiples of the equations to add up, such that the first and fifth derivative terms vanish. \\
+			
+		\end{enumerate}
+		\item Consider the points $x_{-1}, x_{0} = x_{-1} + h_0$, and $x_1 = x_0 + h_1$, where $h_0 \neq h_1$. Let $f(x)$ be a smooth function with $f''(x_0) \neq 0$. Show that the truncation error in the formula \[ f'(x_0) \approx \frac{f(x_1) - f(x_{-1})}{h_0 + h_1} \] with $h_1 = h$ and $h_0 = h/2$ must decrease linearly, and not faster, as $h \rightarrow 0$.
+		
+		\begin{proof}
+			Let $f(x)$ be a smooth function with $f''(x_0) \neq 0$. Suppose there exists points $x_{-1}, x_{0}, x_{-1}$ such that $x_{0} = x_{-1} + h_0$, and $x_1 = x_0 + h_1$, where $h_0 \neq h_1$. Then there exist real numbers $\xi_1, \xi_2$ such that
+			\begin{align}\setcounter{equation}{0}
+				f(x_0 + h)   &= f(x_0) + hf'(x_0) + \frac{h^2}{2} f''(\xi_1) \label{eq:eq7} \\
+				f(x_0 - h/2) &= f(x_0) - \frac{h}{2}f'(x_0) + \left( \frac{1}{2} \right)^2 \frac{h^2}{2} f''(\xi_2), \label{eq:eq8}
+			\end{align}
+			where $x_0 \leq \xi_1 \leq x_0 + h$ and $x_0 - h/2 \leq \xi_2 \leq x_0$. Next, we take the difference between theses two equations, namely \ref{eq:eq7} - \ref{eq:eq8}, \[ f(x_0 + h) - f(x_0 - h/2) = \frac{3h}{2} f'(x_0) + \frac{h^2}{2} f''(\xi_1) - \frac{h^2}{8} f''(\xi_2).\] Now we isolate $f'(x_0),$
+			\begin{align*}
+				\frac{3h}{2} f'(x_0) &= f(x_0 + h) - f(x_0 - h/2) + \frac{h^2}{8} f''(\xi_2) - \frac{h^2}{2} f''(\xi_1)  \\
+							 f'(x_0) &= \frac{f(x_0 + h) - f(x_0 - h/2)}{\cfrac{3h}{2}} + \frac{h}{12} f''(\xi_2) - \frac{h}{3} f''(\xi_1) \\
+							 f'(x_0) &= \frac{f(x_0 + h) - f(x_0 - h/2)}{h/2 + h} + h\left( \frac{1}{12} f''(\xi_2) - \frac{1}{3} f''(\xi_1) \right).
+			\end{align*}
+			Now, let $h_0 = h/2$ and $h_1 = h$. We know that $x_{0} = x_{-1} + h_0$, this implies that $x_{-1} = x_{0} - h_0$ so then we can substitute both this equation, and $x_1 = x_0 + h_1$ in, to be left with \[ f'(x_0) = \frac{f(x_1) - f(x_{-1})}{h_0 + h_1} + h\left( \frac{1}{12} f''(\xi_2) - \frac{1}{3} f''(\xi_1) \right). \] Thus, the truncation error in the formula \[ f'(x_0) \approx \frac{f(x_1) - f(x_{-1})}{h_0 + h_1} \] is \[ h\left( \frac{1}{12} f''(\xi_2) - \frac{1}{3} f''(\xi_1) \right). \] We can rewrite the equation with it's error as \[ f'(x_0) = \frac{f(x_1) - f(x_{-1})}{h_0 + h_1} - \mathcal{O}(h), \] which means the error is linear, and therefore the truncation error decreases linearly, as $h \rightarrow 0$.
+		\end{proof}
+		
+		\item Consider again the points $x_{-1}, x_{0} = x_{-1} + h_0$, and $x_1 = x_0 + h_1$, where $h_0 \neq h_1$. Let $f(x)$ be a smooth function with $f''(x_0) \neq 0$. Consider the following two methods: 
+		\begin{enumerate}[label = \roman*)]
+			\item Define $g(x) = f'(x)$ and seek a staggered mesh, centered approximation as follows:
+			\begin{align*}
+				g_{1/2} &= \frac{f(x_1) - f(x_0)}{h_1}, & g_{-1/2} &= \frac{f(x_0) - f(x_{-1})}{h_0} & f''(x_0) &\approx \frac{g_{1/2} - g_{-1/2}}{(h_0 + h_1)/2}.
+			\end{align*}
+			
+			\item Using the second degree interpolating polynomial in Newton form, differentiated twice, define \[ f''(x_0) \approx 2f[x_{-1}, x_0, x_1]. \]
+		\end{enumerate}
+		\begin{enumerate}
+			\item Show that the above two methods are one and the same.
+			
+			\begin{proof}
+				Let $f(x)$ be a smooth function with $f''(x_0) \neq 0$. Suppose there exists points $x_{-1}, x_{0}, x_{-1}$ such that $x_{0} = x_{-1} + h_0$, and $x_1 = x_0 + h_1$, where $h_0 \neq h_1$. Let's start with ii), the formula using the notation of Newton's divided differences. First we expand out the Newton form by definition,
+				\begin{align} \setcounter{equation}{0}
+					f''(x_0) &\approx 2f[x_{-1}, x_0, x_1] \notag\\
+							 &\approx 2\frac{f[x_0, x_1] - f[x_{-1}, x_0]}{x_1 - x_{-1}} \notag\\
+							 &\approx 2\frac{\cfrac{f[x_1] - f[x_0]}{x_1 - x_0} - \cfrac{f[x_0] - f[x_{-1}]}{x_0 - x_{-1}}}{x_1 - x_{-1}} \notag\\
+							 &\approx 2\frac{\cfrac{f(x_1) - f(x_0)}{x_1 - x_0} - \cfrac{f(x_0) - f(x_{-1})}{x_0 - x_{-1}}}{x_1 - x_{-1}}. \label{eq:eq9}
+				\end{align}
+				From above, we know the following,
+				\begin{align}
+					x_{-1} 		 &= x_0 - h_0 \label{eq:eq10}\\
+					x_1    		 &= x_0 + h_1. \label{eq:eq11}\\
+					x_0 - x_{-1} &= h_0 \label{eq:eq12}\\
+					x_1 - x_0 	 &= h_1 \label{eq:eq13}
+				\end{align}
+				Now we will plug equations \ref{eq:eq10}, \ref{eq:eq11}, \ref{eq:eq12}, and \ref{eq:eq13} into equation \ref{eq:eq9},
+				\begin{align*}
+					f''(x_0) &\approx 2\frac{\cfrac{f(x_1) - f(x_0)}{h_1} - \cfrac{f(x_0) - f(x_{-1})}{h_0}}{x_0 + h_1 - (x_0 - h_0)} \\
+							 &\approx 2\frac{\cfrac{f(x_1) - f(x_0)}{h_1} - \cfrac{f(x_0) - f(x_{-1})}{h_0}}{h_1 + h_0} \\
+							 &\approx \frac{\cfrac{f(x_1) - f(x_0)}{h_1} - \cfrac{f(x_0) - f(x_{-1})}{h_0}}{(h_1 + h_0)/2}.
+				\end{align*}
+				Finally, if we define 
+				\begin{align*}
+					g_{1/2} &= \frac{f(x_1) - f(x_0)}{h_1}, & &\text{and} & g_{-1/2} &= \frac{f(x_0) - f(x_{-1})}{h_0},
+				\end{align*}
+				then we get \[ f''(x_0) \approx \frac{g_{1/2} - g_{-1/2}}{(h_0 + h_1)/2}. \]
+			\end{proof}
+			
+			\item Show that this method is only first order accurate in general.
+			
+			\begin{proof}
+				Let $f(x)$ be a smooth function with $f''(x_0) \neq 0$. Suppose there exists points $x_{-1}, x_{0}, x_{-1}$ such that $x_{0} = x_{-1} + h_0$, and $x_1 = x_0 + h_1$, where $h_0 \neq h_1$. Then there exist real numbers $\xi_1, \xi_2$ such that
+				\begin{align*}
+					f(x_1)	  &= f(x_0 + h_1) = f(x_0) + h_1 f'(x_0) + \frac{h_1^2}{2}f''(x_0) + \frac{h_1^3}{3!} f'''(\xi_1) \\
+					f(x_{-1}) &= f(x_0 - h_0) = f(x_0) - h_0 f'(x_0) + \frac{h_0^2}{2}f''(x_0) - \frac{h_0^3}{3!} f'''(\xi_2)
+				\end{align*}
+				where $x_0 \leq \xi_1 \leq x_0 + h_1$ and $x_0 - h_0 \leq \xi_2 \leq x_0$. Next we compute the following, 
+				\begin{align*}
+					f(x_1) - f(x_0)    &= h_1 f'(x_0) + \frac{h_1^2}{2}f''(x_0) + \frac{h_1^3}{3!} f'''(\xi_1) \\
+					f(x_0) - f(x_{-1}) &= h_0 f'(x_0) - \frac{h_0^2}{2}f''(x_0) + \frac{h_0^3}{3!} f'''(\xi_2). 
+				\end{align*}
+				Now we divide the equations by $h_1$ and $h_0$, respectively, in order to create the form of a divided difference,
+				\begin{align*}
+					\frac{f(x_1) - f(x_0)}{h_1}    &= f'(x_0) + \frac{h_1}{2}f''(x_0) + \frac{h_1^2}{6} f'''(\xi_1) \\
+					\frac{f(x_0) - f(x_{-1})}{h_0} &= f'(x_0) - \frac{h_0}{2}f''(x_0) + \frac{h_0^2}{6} f'''(\xi_2). 
+				\end{align*}
+				Next, we define 
+				\begin{align*}
+					g_{1/2} &= \frac{f(x_1) - f(x_0)}{h_1}, & &\text{and} & g_{-1/2} &= \frac{f(x_0) - f(x_{-1})}{h_0}
+				\end{align*}
+				Then, we take the difference of these equations and we get \[g_{1/2} - g_{-1/2} = \frac{h_1}{2}f''(x_0) + \frac{h_1^2}{6} f'''(\xi_1) + \frac{h_0}{2}f''(x_0) - \frac{h_0^2}{6} f'''(\xi_2).\] Thus we begin to isolate the second derivative,
+				\begin{align*}
+					\frac{h_1}{2}f''(x_0) + \frac{h_0}{2}f''(x_0) &= g_{1/2} - g_{-1/2} + \frac{h_0^2}{6} f'''(\xi_2) - \frac{h_1^2}{6} f'''(\xi_1) \\
+					\frac{h_1 + h_0}{2}f''(x_0) &= g_{1/2} - g_{-1/2} + \frac{h_0^2}{6} f'''(\xi_2) - \frac{h_1^2}{6} f'''(\xi_1).
+				\end{align*}
+				We know that $f$ is smooth, so we can expect that $f'''(x)$ is bounded. Then, there exist a maximum of $f$ on $[a, b]$, call it $M \in \mathbb{R}$, such that \[ \frac{h_0^2}{6} f'''(\xi_2) - \frac{h_1^2}{6} f'''(\xi_1) \leq \frac{h_0^2}{6} M - \frac{h_1^2}{6} M = \frac{h_0^2 - h_1^2}{6}M = \frac{(h_0 + h_1)(h_0 - h_1)}{6}M. \] Now we are left with, 
+				\begin{align*}
+					\frac{h_1 + h_0}{2}f''(x_0) &\leq g_{1/2} - g_{-1/2} + \frac{(h_0 + h_1)(h_0 - h_1)}{6}M \\
+									   f''(x_0) &\leq \frac{g_{1/2} - g_{-1/2}}{(h_1 + h_0)/2} + \frac{2(h_0 + h_1)(h_0 - h_1)}{6(h_1 + h_0)} M \\
+									   			&\leq \frac{g_{1/2} - g_{-1/2}}{(h_1 + h_0)/2} + \frac{h_0 - h_1}{3} M.
+				\end{align*}
+				Obviously the difference between two linear order terms is also linear. So we can rewrite the equation with it's truncation error as \[ f''(x_0) = \frac{g_{1/2} - g_{-1/2}}{(h_1 + h_0)/2} + \mathcal{O}(h), \] which shows that the error is linear, and therefore this method is only first order accurate in general.
+			\end{proof}
+			
+			\item Run the method with MATLAB for the function $f(x) = e^x$ at $x_0 = 0.$ Use $h_1 = h$ and $h_0 = h/2.$ Report your findings. \\
+			
+			\hspace{15pt} To determine the optimal $h$ for this question we will briefly derive the formula similar to what we did for part b) question 1. Jumping right into, we have		
+			\begin{dgroup*}$
+				\begin{dmath*}
+					|\bar{D}_h - D_h| = \frac{2h_0\left(\bar{f}(x_1) - \bar{f}(x_0)\right) - 2h_1\left(\bar{f}(x_0) - \bar{f}(x_{-1})\right)}{h_0h_1(h_1 + h_0)} -\frac{2h_0(f(x_1) - f(x_0)) - 2h_1(f(x_0) - f(x_{-1}))}{h_0h_1(h_1 + h_0)}
+				\end{dmath*}
+				\begin{dmath*}
+					= \frac{2h_0\bar{f}(x_1) - 2h_0\bar{f}(x_0) - 2h_1\bar{f}(x_0) - 2h_1\bar{f}(x_{-1}) - 2h_0\bar{f}(x_1) + 2h_0\bar{f}(x_0) + 2h_1\bar{f}(x_0) + 2h_1\bar{f}(x_{-1})}{h_0h_1(h_1 + h_0)}
+				\end{dmath*}
+				\begin{dmath*}
+					= \frac{2e_r(x_1) - 2e_r(x_{-1})}{2h^2}
+				\end{dmath*}
+				\begin{dmath*}
+					\leq 2\left|\frac{e_r(x_1)}{2h^2}\right| + 2\left|\frac{e_r(x_{-1})}{2h^2}\right|
+				\end{dmath*}
+				\begin{dmath*}
+					\leq \frac{4 \epsilon}{2h^2}
+				\end{dmath*}
+				\begin{dmath*}
+					= \frac{2 \epsilon}{h^2}.
+				\end{dmath*}$
+			\end{dgroup*}
+			Assuming $|f'''(\xi)| \leq M$ in $[x_0 - h/2, x_0 + h]$, we can bound the approximation by
+			\begin{align*}
+				|f'''(x_0) - \bar{D}_h| &= |(f'''(x_0) - D_h) + (D_h - \bar{D}_r)| \\
+										&\leq |f'''(x_0) - D_h| + |D_h - \bar{D}_h| \leq \frac{hM}{3} + \frac{2 \epsilon}{h^2}.
+			\end{align*}
+				Now define $E(h) = \frac{hM}{3} + \frac{2 \epsilon}{h^2}.$ Using this formula we can use calculus methods to find the optimal $h$. The result is \[ \frac{\mathrm{d}E}{\mathrm{d}h} = \frac{M}{3} - \frac{4\epsilon}{h^3} = 0. \] Therefore the optimal $h$ can be found with the following equation, 
+			\begin{align*}
+				\frac{M}{3} &= \frac{4\epsilon}{h^3} \\
+						 h^3 &= \frac{12\epsilon}{M} \\
+						   h &= \sqrt[3]{\frac{12\epsilon}{M}}.
+			\end{align*}
+			
+			\hspace{15pt} Recall the formula from question one, \[ \alpha = \frac{\ln(e_{i + 1}) - \ln(e_i)}{\ln(h_{i + 1}) - \ln(h_i)} \] which we will use to calculate the approximate truncation error, and by extension the order of accuracy of the centered difference approximation.
+			
+			\lstinputlisting[style = MATLAB-editor, basicstyle = \mlttfamily\scriptsize, linerange = {42 - 79}, caption = {MATLAB code for approximating the second derivative of $e^x$ at $x_0$}]{assignment5.m}
+			
+			\pagebreak
+			
+			\color{lightgray}
+			\begin{verbatim}
+				Using a staggered mesh, centered approximation for calculating the second
+				derivative of e^x at 0:
+				
+				h = 0.100000000 and e^0 = 1.01730228
+				h = 0.010000000 and e^0 = 1.00167293
+				h = 0.001000000 and e^0 = 1.00016673
+				h = 0.000100000 and e^0 = 1.00001666
+				h = 0.000010000 and e^0 = 1.00000008
+				h = 0.000001000 and e^0 = 1.00008890
+				h = 0.000000100 and e^0 = 1.00660221
+				h = 0.000000010 and e^0 = 0.00000000
+				h = 0.000000001 and e^0 = 0.00000000
+				
+				The approximate truncation error for each term is:
+				    1.0146    1.0015    1.0003    2.3041   -3.0313   -1.8708   -2.1803         0
+				
+				The value of h that yields the closest approximation is h = 0.000010
+				The theoretical optimal h is 0.0000139
+			\end{verbatim}
+			\color{black}
+			
+			\hspace{15pt} This method seems to be quite accurate for reasonably small values of $h$. Even with $h = 0.1$, the approximation is within $1.75\%$ of the true value. Also notice from $h = 10^{-1}$ to $h = 10^{-4}$ that there is clear signs of linear accuracy. Namely, the approximation is gaining one decimal place of accuracy with each decrease by one-tenth in $h$. The level of accuracy is confirmed by observing the truncation error for the first few terms. The best approximation is $1.00000008$, which occurs when $h = 0.00001$. Our calculation for the optimal $h = 0.0000139$ confirms this result. At $h = 10^{-5}$, there is a jump of three decimals closer to the answer. The most probable explanation for this is the presence of roundoff errors. This theory is back up by the evidence of the following iterations. The approximations begin to increase, then at $h = 10^{-8}$, the approximation heads to zero. As mention, this is specifically because of the cancellation errors.
+		\end{enumerate}
+	\end{enumerate}
+\end{document}
